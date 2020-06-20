@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use  Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -26,7 +27,8 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo ='/dashboard';
+    protected $redirectAfterLogout = '/login';
 
     /**
      * Create a new controller instance.
@@ -37,4 +39,34 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+     //Overrided method
+     public function logout(Request $request)
+     {
+         $this->guard()->logout();
+ 
+         $request->session()->invalidate();
+ 
+         $request->session()->regenerateToken();
+ 
+         if ($response = $this->loggedOut($request)) {
+             return $response;
+         }
+ 
+         return $request->wantsJson()
+             ? new Response('', 204)
+             : redirect($this->redirectAfterLogout);
+     }
+ 
+     public function username()
+     {
+         // jahir : jahir@gmail.com
+ 
+         $fieldValue = request()->input('username_or_email');
+ 
+         $fieldName = filter_var($fieldValue,FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+ 
+         request()->merge([$fieldName => $fieldValue]);
+ 
+         return $fieldName;
+     }
 }
