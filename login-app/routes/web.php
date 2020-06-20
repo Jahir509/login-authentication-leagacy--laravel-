@@ -20,3 +20,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard.index');
+Route::get('/profile', 'Auth\ProfileController@edit')->name('edit-profile');
+Route::put('/profile', 'Auth\ProfileController@update')->name('update-profile');
